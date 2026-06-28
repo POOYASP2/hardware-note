@@ -1,5 +1,3 @@
-فایل دریافت شد. از بخش **1 — Introduction to Hardware Security** در صفحهٔ اول شروع می‌کنیم. این بخش دربارهٔ دلیل اهمیت **Hardware Security**، انواع کلی حملات سخت‌افزاری و نمونه‌هایی مانند **Counterfeit Hardware، Side-Channel Attacks، Rowhammer، Spectre** و **Meltdown** است.
-
 # گام ۱: آموزش مفهومی و مفصل
 
 ## Introduction to Hardware Security
