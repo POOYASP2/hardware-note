@@ -52,12 +52,15 @@
 برای شروع synthesis، سه چیز لازم داریم:
 
 1. **RTL Description**
+
    یعنی توضیح اینکه مدار چه کاری باید انجام دهد. این توصیف معمولاً با **HDL** مثل **VHDL، Verilog، SystemVerilog** نوشته می‌شود.
 
 2. **Technology Information**
+
    اگر ASIC طراحی می‌کنی، این یعنی **Standard Cell Library**، فایل‌های timing، power، area و اطلاعات technology. اگر FPGA طراحی می‌کنی، یعنی اطلاعات بلوک‌های موجود در FPGA که vendor در اختیار ابزار قرار می‌دهد.
 
 3. **Constraints**
+ 
    یعنی محدودیت‌های طراحی، مثل **Timing، Area، Power**. نمونهٔ مهم آن **SDC / Synopsys Design Constraints** است، مثلاً تعریف clock period با چیزی مثل:
    `create_clock -name MYCLK -period 3.5 CLK`
 
@@ -83,7 +86,9 @@
 
 ### 6. Logic Synthesizer، Liberty File و Netlist
 
-**Logic Synthesizer** ابزار صنعتی‌ای است که RTL را به ساختار واقعی‌تر مدار تبدیل می‌کند. اما synthesizer بدون دانستن سلول‌های موجود نمی‌تواند تصمیم بگیرد. برای ASIC، اطلاعات سلول‌ها معمولاً در فایل **Liberty File / .lib** قرار دارد. این فایل اطلاعاتی مثل **Area، Timing، Power** هر cell را به ابزار می‌دهد. مثلاً برای یک `nand2` می‌گوید چقدر area دارد، delay آن چقدر است، توان مصرفی آن چقدر است.
+**Logic Synthesizer**
+
+ ابزار صنعتی‌ای است که RTL را به ساختار واقعی‌تر مدار تبدیل می‌کند. اما synthesizer بدون دانستن سلول‌های موجود نمی‌تواند تصمیم بگیرد. برای ASIC، اطلاعات سلول‌ها معمولاً در فایل **Liberty File / .lib** قرار دارد. این فایل اطلاعاتی مثل **Area، Timing، Power** هر cell را به ابزار می‌دهد. مثلاً برای یک `nand2` می‌گوید چقدر area دارد، delay آن چقدر است، توان مصرفی آن چقدر است.
 
 در FPGA، اطلاعات مشابه معمولاً proprietary و در قالب فایل‌های vendor-specific است. چون FPGA ساختار داخلی خاص خودش را دارد و vendor فقط مقدار لازم از اطلاعات را در اختیار ابزار می‌گذارد. برای ASIC ابزارهایی مثل **YOSYS** وجود دارند؛ برای FPGA ابزارهای vendor مانند **Vivado، Vitis** و مشابه آن استفاده می‌شوند.
 
@@ -106,18 +111,25 @@
 
 برای P&R، علاوه بر netlist به اطلاعات هندسی cellها نیاز داریم. این اطلاعات معمولاً در **LEF / Library Exchange Format** قرار دارد. تفاوت مهم:
 
-* **Liberty File:** اطلاعات منطقی/زمانی/توان/مساحت cellها را می‌دهد.
-* **LEF File:** اطلاعات هندسی و فیزیکی layout cellها و layerها را می‌دهد.
+* **Liberty File:**  
+
+اطلاعات منطقی/زمانی/توان/مساحت cellها را می‌دهد.
+* **LEF File:** 
+
+اطلاعات هندسی و فیزیکی layout cellها و layerها را می‌دهد.
 
 در ASIC P&R سه مرحلهٔ اصلی داریم:
 
 1. **Floorplanning**
+
    تصمیم‌گیری دربارهٔ سازمان کلی chip: محل pins، power supply، ناحیهٔ logic، ناحیهٔ routing و macroها.
 
 2. **Placement**
+
    قرار دادن standard cellها در مکان‌های مناسب. معمولاً cellها ارتفاع یکسان و عرض متفاوت دارند تا در ردیف‌های منظم کنار هم قرار بگیرند.
 
 3. **Routing**
+
    اتصال فیزیکی سلول‌های placed شده با metal layers. اینجا باید قوانین spacing، direction و layer constraints رعایت شوند.
 
 در FPGA هم P&R داریم، اما ساده‌تر است. چون ساختار FPGA قبلاً توسط manufacturer ساخته شده است. pins، I/O blocks، LUTها، routing resources و programmable cells از قبل وجود دارند. ابزار فقط باید تصمیم بگیرد کدام منابع استفاده شوند و چطور connectionها برنامه‌ریزی شوند.
@@ -128,7 +140,9 @@
 
 بعد از اینکه طراحی FPGA از مرحلهٔ Place & Route عبور کرد، هنوز باید خود FPGA فیزیکی برنامه‌ریزی شود. خروجی ابزار یک **Bitstream** است: دنباله‌ای از bitها که طبق قواعد vendor کدگذاری شده‌اند. این bitstream مشخص می‌کند هر LUT چه محتوایی داشته باشد، کدام multiplexer چه مسیری را انتخاب کند، کدام routing switch وصل یا قطع شود، و کدام Flip-Flopها استفاده شوند.
 
-Bitstream را معمولاً از طریق USB یا interface دیگر از PC به board منتقل می‌کنند. اینجا یک نکتهٔ امنیتی مهم وجود دارد: اگر کسی bitstream را بدزدد، ممکن است design را clone کند. اگر کسی bitstream را modify کند، می‌تواند عملکرد مدار را تغییر دهد. پس در hardware security، حفاظت از **FPGA Bitstream** یک موضوع جدی است.
+Bitstream
+
+ را معمولاً از طریق USB یا interface دیگر از PC به board منتقل می‌کنند. اینجا یک نکتهٔ امنیتی مهم وجود دارد: اگر کسی bitstream را بدزدد، ممکن است design را clone کند. اگر کسی bitstream را modify کند، می‌تواند عملکرد مدار را تغییر دهد. پس در hardware security، حفاظت از **FPGA Bitstream** یک موضوع جدی است.
 
 در فایل گفته شده که FPGA یا PLD معمولاً حافظه‌ای برای ذخیرهٔ bitstream دارد که می‌تواند **SRAM-based** یا **Flash-based** باشد. در **SRAM-based FPGA** معمولاً configuration volatile است؛ یعنی با قطع power از بین می‌رود و هنگام روشن‌شدن باید دوباره load شود. در **Flash-based FPGA** configuration می‌تواند non-volatile باشد. این تفاوت از نظر امنیت، boot time، reliability و attack surface مهم است.
 
@@ -279,9 +293,12 @@ Bitstream را معمولاً از طریق USB یا interface دیگر از PC 
 
 ---
 
-### 4. Full Adder داخل FPGA cell برای performance است
+### 4. Full Adder
+ داخل FPGA cell برای performance است
 
-Full Adder داخل basic cell تصادفی نیست. چون addition زیاد استفاده می‌شود، داشتن مسیر dedicated سریع‌تر از ساختن addition فقط با LUT است.
+Full Adder
+
+ داخل basic cell تصادفی نیست. چون addition زیاد استفاده می‌شود، داشتن مسیر dedicated سریع‌تر از ساختن addition فقط با LUT است.
 
 ---
 
