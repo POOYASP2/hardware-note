@@ -149,13 +149,20 @@
 
 ### 9. Memory Protection: confidentiality، integrity، freshness و access pattern
 
-Memory یکی از مهم‌ترین اهداف attacker است. حملات memory می‌توانند از software غیرقابل اعتماد، bus snooping، malicious DMA device، cold boot attack، یا memory manipulation بیایند. فصل چند نوع attack روی memory معرفی می‌کند:
+Memory
 
-* **Snooping:** passive read از data.
-* **Spoofing:** inject کردن memory command جدید.
-* **Splicing:** ترکیب بخش‌هایی از commandهای معتبر برای ساخت command مخرب.
-* **Replay:** ارسال دوبارهٔ command قدیمی.
-* **Disturbance:** ایجاد اختلال مثل DoS یا **Rowhammer**.
+ یکی از مهم‌ترین اهداف attacker است. حملات memory می‌توانند از software غیرقابل اعتماد، bus snooping، malicious DMA device، cold boot attack، یا memory manipulation بیایند. فصل چند نوع attack روی memory معرفی می‌کند:
+
+* **Snooping:**
+*  passive read از data.
+* **Spoofing:** 
+* inject کردن memory command جدید.
+* **Splicing:**
+*  ترکیب بخش‌هایی از commandهای معتبر برای ساخت command مخرب.
+* **Replay:**
+*  ارسال دوبارهٔ command قدیمی.
+* **Disturbance:**
+*  ایجاد اختلال مثل DoS یا **Rowhammer**.
 
 برای **Confidentiality** از **Memory Encryption** استفاده می‌شود. داده وقتی از CPU خارج می‌شود، توسط **Encryption Engine** رمز می‌شود و ciphertext در DRAM ذخیره می‌شود. هنگام برگشت، decrypt می‌شود. معمولاً **AES-CTR** مناسب است چون می‌تواند padها را precompute کند و encryption/decryption عمدتاً XOR شود. اما encryption engine باید نزدیک CPU یا داخل SoC باشد، چون plaintext نباید روی external bus ظاهر شود.
 
@@ -169,11 +176,15 @@ Memory یکی از مهم‌ترین اهداف attacker است. حملات memo
 
 ### 10. NVM/NVRAM Security
 
-**NVM / Non-Volatile Memory** داده را حتی بدون power نگه می‌دارد. **NVRAM** نوعی NVM است که می‌تواند نقش main memory را داشته باشد یا DRAM را تکمیل کند. مثال‌ها: **ReRAM، FeRAM، MRAM، PCM**. مزیت این memoryها persistence است؛ اما همین persistence امنیتی هم خطرناک است.
+**NVM / Non-Volatile Memory**
+
+ داده را حتی بدون power نگه می‌دارد. **NVRAM** نوعی NVM است که می‌تواند نقش main memory را داشته باشد یا DRAM را تکمیل کند. مثال‌ها: **ReRAM، FeRAM، MRAM، PCM**. مزیت این memoryها persistence است؛ اما همین persistence امنیتی هم خطرناک است.
 
 در DRAM وقتی power قطع شود، داده به‌مرور از بین می‌رود. اما در NVRAM داده بعد از reboot، crash یا shutdown باقی می‌ماند. این یعنی **Data Remanence**. اگر secret در NVRAM باقی بماند، attacker بعداً می‌تواند آن را extract کند. حتی deletion هم همیشه کامل نیست؛ در بعضی memoryها اثر residual charge یا wear pattern ممکن است اطلاعات قبلی را leak کند.
 
-NVRAM همچنین مسئلهٔ **Atomicity** دارد. اگر سیستم هنگام write crash کند، باید یا کل update persisted شده باشد یا هیچ‌کدام. برای داده‌های بزرگ‌تر از یک word، این سخت‌تر می‌شود. امنیت integrity tree هم باید با atomic update سازگار باشد؛ یعنی data و security metadata مثل hash/MAC/counter باید بعد از reboot یا crash consistent باشند.
+NVRAM
+
+ همچنین مسئلهٔ **Atomicity** دارد. اگر سیستم هنگام write crash کند، باید یا کل update persisted شده باشد یا هیچ‌کدام. برای داده‌های بزرگ‌تر از یک word، این سخت‌تر می‌شود. امنیت integrity tree هم باید با atomic update سازگار باشد؛ یعنی data و security metadata مثل hash/MAC/counter باید بعد از reboot یا crash consistent باشند.
 
 پس برای NVRAM فقط encryption کافی نیست. باید مشخص کنیم چه داده‌ای persistent باشد، granularity persistence چیست، بعد از reboot state امنیتی چطور restore شود، و اگر memory هنگام خاموشی تغییر کرد، boot-time verification بتواند آن را detect کند.
 
@@ -181,7 +192,15 @@ NVRAM همچنین مسئلهٔ **Atomicity** دارد. اگر سیستم هنگ
 
 ### 11. Multiprocessor، SMP، DSM/NUMA و Many-Core Protection
 
-در سیستم‌های multiprocessor دو مدل مهم داریم: **SMP / Symmetric Multi-Processing** و **DSM/NUMA / Distributed Shared Memory / Non-Uniform Memory Access**. در SMP چند CPU یک memory مرکزی و معمولاً یک shared bus دارند. این shared bus attack surface بزرگی است، چون attacker یا component untrusted ممکن است traffic را snoop کند.
+در سیستم‌های multiprocessor دو مدل مهم داریم:
+
+
+
+ **SMP / Symmetric Multi-Processing** و **DSM/NUMA / Distributed Shared Memory / Non-Uniform Memory Access**.
+ 
+ 
+ 
+  در SMP چند CPU یک memory مرکزی و معمولاً یک shared bus دارند. این shared bus attack surface بزرگی است، چون attacker یا component untrusted ممکن است traffic را snoop کند.
 
 در DSM/NUMA هر CPU یا node memory خودش را دارد و ارتباط از طریق interconnection network انجام می‌شود. در اینجا memory shared به شکل SMP نیست، اما inter-processor communication مهم می‌شود. باید confidentiality، integrity و حتی communication pattern protection برای پیام‌های بین processors داشته باشیم.
 
@@ -196,20 +215,29 @@ NVRAM همچنین مسئلهٔ **Atomicity** دارد. اگر سیستم هنگ
 فصل چهار اصل طراحی می‌دهد:
 
 1. **Protect off-chip communication and memory**
+
+
    حافظه و ارتباطات خارج chip untrusted هستند؛ باید encryption، hashing/MAC و access pattern protection داشته باشند.
 
 2. **Isolate processor state among TEE execution and other software**
+
+
    architectural و microarchitectural state باید isolate یا flush شود.
 
 3. **Allow TCB introspection**
+
    باید بتوان TCB را monitor، fingerprint و authenticate کرد.
 
 4. **Authenticate and continuously monitor TEE and TCB**
+
    فقط boot-time check کافی نیست؛ runtime monitoring هم لازم است.
 
 در پایان فصل چند pitfall مهم دارد. **Security by obscurity** کافی نیست. **Hardware immutability** خطرناک است، چون hardware را مثل software به‌راحتی patch نمی‌کنیم. **Wrong threat model** باعث شکست می‌شود؛ مثل اینکه side-channelها را در threat model نیاوریم. **Fixed threat model** برای همهٔ سیستم‌ها کافی نیست. استفاده از **outdated/custom crypto** خطرناک است. همچنین **zero-overhead security** توهم است؛ امنیت واقعی معمولاً هزینهٔ performance، area یا energy دارد.
 
-نکتهٔ آخر: فقط تمرکز روی **Speculative Attacks** کافی نیست. اگر فقط Spectre/Meltdown را در نظر بگیریم ولی memory attacks، DMA attacks، side channels، supply chain و TCB bugs را نادیده بگیریم، طراحی هنوز ناامن است.
+نکتهٔ آخر: فقط تمرکز روی **Speculative Attacks** کافی نیست. اگر فقط Spectre/Meltdown را در نظر بگیریم ولی memory attacks، DMA attacks، side channels، supply chain و TCB bugs
+
+
+ را نادیده بگیریم، طراحی هنوز ناامن است.
 
 ---
 
@@ -391,20 +419,35 @@ NVRAM همچنین مسئلهٔ **Atomicity** دارد. اگر سیستم هنگ
 
 ## Pitfalls
 
-### 1. Secure Processor همان processor کاملاً امن نیست
+### 1. Secure Processor
 
-**Secure Processor** security features دارد، اما خودش می‌تواند vulnerable باشد: bugs، side channels، hardware Trojans، supply-chain attacks.
+
+ همان processor کاملاً امن نیست
+
+**Secure Processor**
+
+ security features
+ 
+ 
+ 
+  دارد، اما خودش می‌تواند vulnerable باشد: bugs، side channels، hardware Trojans، supply-chain attacks.
 
 ### 2. TEE و TCB یکی نیستند
 
-* **TEE:** محیط protected execution
-* **TCB:** اجزای trusted که TEE را پیاده می‌کنند
+* **TEE:**
+* 
+*  محیط protected execution
+* **TCB:** 
+* 
+* اجزای trusted که TEE را پیاده می‌کنند
 
 اگر TCB خراب شود، TEE دیگر قابل اعتماد نیست.
 
 ### 3. TEE معمولاً Availability نمی‌دهد
 
-TEE معمولاً روی **Confidentiality** و **Integrity** تمرکز دارد. DoS یا توقف execution معمولاً خارج از guarantee است.
+TEE
+
+ معمولاً روی **Confidentiality** و **Integrity** تمرکز دارد. DoS یا توقف execution معمولاً خارج از guarantee است.
 
 ### 4. OS و Hypervisor همیشه trusted نیستند
 
@@ -416,11 +459,19 @@ TEE معمولاً روی **Confidentiality** و **Integrity** تمرکز دار
 
 ### 6. فقط architectural state کافی نیست
 
-Cache، TLB، branch predictor و pipeline هم می‌توانند leak کنند. پس microarchitectural state باید isolate یا flush شود.
+Cache، TLB، branch predictor
+
+ و pipeline
+ 
+ 
+  هم می‌توانند leak کنند. پس microarchitectural state باید isolate یا flush شود.
 
 ### 7. Encryption فقط confidentiality می‌دهد
 
-Memory encryption جلوی خواندن plaintext را می‌گیرد، اما integrity، replay و access pattern leakage را حل نمی‌کند.
+Memory encryption
+
+
+ جلوی خواندن plaintext را می‌گیرد، اما integrity، replay و access pattern leakage را حل نمی‌کند.
 
 ### 8. Hash Tree بدون trusted root کافی نیست
 
@@ -432,20 +483,35 @@ Memory encryption جلوی خواندن plaintext را می‌گیرد، اما 
 
 ### 10. ORAM برای confidentiality محتوای memory نیست
 
-ORAM برای مخفی‌کردن **access pattern** است. معمولاً روی encryption و integrity اضافه می‌شود.
+ORAM
+
+
+ برای مخفی‌کردن **access pattern** است. معمولاً روی encryption و integrity اضافه می‌شود.
 
 ### 11. PUF رایگان و ساده نیست
 
-PUF نیاز به reliability، error correction، certificate management و hardware اضافه دارد.
+PUF
+
+
+ نیاز به reliability، error correction، certificate management و hardware اضافه دارد.
 
 ### 12. Secure Boot با update مشکل مفهومی دارد
 
-Update قانونی hash را عوض می‌کند. پس باید signature/update mechanism درست وجود داشته باشد.
+Update
+
+
+ قانونی hash را عوض می‌کند. پس باید signature/update mechanism درست وجود داشته باشد.
 
 ### 13. Remote Attestation با Secure Boot یکی نیست
 
-**Secure Boot** محلی تصمیم می‌گیرد boot کند یا نه.
-**Remote Attestation** به طرف خارجی گزارش می‌دهد چه چیزی اجرا می‌شود.
+**Secure Boot**
+
+
+ محلی تصمیم می‌گیرد boot کند یا نه.
+**Remote Attestation**
+
+
+ به طرف خارجی گزارش می‌دهد چه چیزی اجرا می‌شود.
 
 ### 14. NVRAM خطر remanence بیشتری دارد
 
